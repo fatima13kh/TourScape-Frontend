@@ -1,6 +1,7 @@
 // src/components/Dashboard/Dashboard.jsx
 
 import { useContext, useEffect } from 'react';
+import { Link } from 'react-router';
 import * as userService from '../../services/userService'
 import { UserContext } from '../../contexts/UserContext';
 
@@ -26,6 +27,15 @@ const Dashboard = () => {
       <p>
         This is the dashboard page where you can see a list of all the users.
       </p>
+
+      {/* Show Create Tour button only for tour companies */}
+      {user?.role === 'tourCompany' && (
+        <div style={{ marginTop: '20px' }}>
+          <Link to="/tours/new">
+            <button>CREATE TOUR</button>
+          </Link>
+        </div>
+      )}
     </main>
   );
 };
