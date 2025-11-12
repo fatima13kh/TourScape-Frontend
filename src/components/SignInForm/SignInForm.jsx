@@ -1,7 +1,7 @@
 // src/components/SignInForm/SignInForm.jsx
 
 import { useState, useContext } from 'react';
-import { useNavigate } from 'react-router';
+import { useNavigate, Link } from 'react-router';
 
 import { signIn } from '../../services/authService';
 
@@ -69,6 +69,10 @@ const SignInForm = () => {
           <button onClick={() => navigate('/')}>Cancel</button>
         </div>
       </form>
+
+      <p style={{ marginTop: '20px', textAlign: 'center' }}>
+        Don't have an account? <Link to='/sign-up'>Sign Up</Link>
+      </p>
     </main>
   );
 };

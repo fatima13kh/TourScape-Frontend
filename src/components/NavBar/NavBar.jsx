@@ -25,19 +25,22 @@ const NavBar = () => {
 
   return (
     <nav>
-      {user ? (
-        <ul>
-          <li>Welcome, {user.username}</li>
-          <li><Link to='/'>Dashboard</Link></li>
+      <ul>
+        {/* ALWAYS SHOW - Home, Tours & Companies for everyone */}
+        <li><Link to='/'>Home</Link></li>
+        <li><Link to='/tours'>Tours</Link></li>
+        <li><Link to='/companies'>Companies</Link></li>
+        
+        {/* Conditional: Profile (only when signed in) */}
+        {user && <li><Link to='/profile'>Profile</Link></li>}
+        
+        {/* ALWAYS SHOW - Sign In/Sign Out */}
+        {user ? (
           <li><Link to='/' onClick={handleSignOut}>Sign Out</Link></li>
-        </ul>
-      ) : (
-        <ul>
-          <li><Link to='/'>Home</Link></li>
-          <li><Link to='/sign-up'>Sign Up</Link></li>
+        ) : (
           <li><Link to='/sign-in'>Sign In</Link></li>
-        </ul>
-      )}
+        )}
+      </ul>
     </nav>
   );
 };
