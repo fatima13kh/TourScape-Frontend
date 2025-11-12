@@ -93,7 +93,10 @@ const SignUpForm = () => {
           <button onClick={() => navigate('/')}>Cancel</button>
         </div>
       </form>
+      
+      
     </main>
+    
   );
 };
 
