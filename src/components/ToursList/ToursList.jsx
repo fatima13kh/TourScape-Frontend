@@ -1,5 +1,5 @@
 import React from 'react';
-//import TourCard from '../TourCard/TourCard';
+import TourCard from '../TourCard/TourCard';
 
 const ToursList = ({ tours, loading, isCompanyView, onEdit, onDelete }) => {
   if (loading) {
