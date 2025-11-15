@@ -10,6 +10,10 @@ import Landing from './components/Landing/Landing';
 import Dashboard from './components/Dashboard/Dashboard';
 import TourForm from './components/TourForm/TourForm';
 import { tourService } from './services/tourService';
+import Companies from './components/Companies/Companies';
+import CompanyDetail from './components/CompanyDetail/CompanyDetail';
+import Tours from './components/Tours/Tours';
+import TourDetail from './components/TourDetail/TourDetail';
 
 const App = () => {
   const { user } = useContext(UserContext);
@@ -31,6 +35,13 @@ const App = () => {
         <Route path='/sign-in' element={<SignInForm />} />
         <Route path='/tours/new' element={<TourForm handleAddTour={handleAddTour} />} />
         
+        {/* Companies routes */}
+  <Route path='/companies' element={<Companies />} />
+  <Route path='/companies/:companyId' element={<CompanyDetail />} />
+  
+  {/* Tours routes */}
+  <Route path='/tours' element={<Tours />} />
+  <Route path='/tours/:tourId' element={<TourDetail />} />
         {/* Conditional routes based on authentication */}
         {user ? (
           // Authenticated user routes
