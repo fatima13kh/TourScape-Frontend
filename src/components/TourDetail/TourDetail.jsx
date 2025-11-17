@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router';
 import { tourService } from '../../services/tourService';
 import { UserContext } from '../../contexts/UserContext';
+import BookingForm from '../BookingForm/BookingForm';
 
 const TourDetail = () => {
   const { tourId } = useParams();
@@ -10,12 +11,7 @@ const TourDetail = () => {
   const [tour, setTour] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [bookingQuantities, setBookingQuantities] = useState({
-    adults: 1,
-    children: 0,
-    toddlers: 0,
-    babies: 0
-  });
+  const [showBookingModal, setShowBookingModal] = useState(false);
 
   useEffect(() => {
     const fetchTour = async () => {
@@ -33,40 +29,36 @@ const TourDetail = () => {
     fetchTour();
   }, [tourId]);
 
-  const handleQuantityChange = (category, value) => {
-    const numValue = parseInt(value) || 0;
-    setBookingQuantities(prev => ({
-      ...prev,
-      [category]: Math.max(0, numValue)
-    }));
-  };
-
-  const calculateTotal = () => {
-    if (!tour) return 0;
-    
-    const adultTotal = bookingQuantities.adults * tour.pricing.adult.price;
-    const childTotal = bookingQuantities.children * (tour.pricing.child?.price || 0);
-    const toddlerTotal = bookingQuantities.toddlers * (tour.pricing.toddler?.price || 0);
-    const babyTotal = bookingQuantities.babies * (tour.pricing.baby?.price || 0);
-    
-    return adultTotal + childTotal + toddlerTotal + babyTotal;
-  };
-
   const handleBookTour = () => {
     if (!user) {
       navigate('/sign-in');
       return;
     }
-    // Implement booking logic here
-    console.log('Booking tour:', { tourId, quantities: bookingQuantities });
-    alert('Booking functionality to be implemented!');
+    setShowBookingModal(true);
+  };
+
+  const handleDeleteTour = async () => {
+    if (!window.confirm('Are you sure you want to delete this tour? This action cannot be undone.')) {
+      return;
+    }
+
+    if (tour.attendees && tour.attendees.length > 0) {
+      alert('Cannot delete tour with existing bookings');
+      return;
+    }
+
+    try {
+      await tourService.delete(tourId);
+      alert('Tour deleted successfully');
+      navigate('/tours');
+    } catch (err) {
+      alert(err.message || 'Failed to delete tour');
+    }
   };
 
   if (loading) return <div>Loading tour details...</div>;
   if (error) return <div>{error}</div>;
   if (!tour) return <div>Tour not found</div>;
-
-  const totalPrice = calculateTotal();
 
   return (
     <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
@@ -81,6 +73,40 @@ const TourDetail = () => {
           <p style={{ fontSize: '1.2em', color: '#666', marginBottom: '20px' }}>
             by <Link to={`/companies/${tour.company?._id}`}>{tour.company?.username}</Link>
           </p>
+
+          {/* Edit/Delete buttons - only show for tour owner */}
+          {user && tour.company._id === user._id && (
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+              <button
+                onClick={() => navigate(`/tours/${tourId}/edit`)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#ffc107',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Edit Tour
+              </button>
+              <button
+                onClick={handleDeleteTour}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#dc3545',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer',
+                  fontWeight: 'bold'
+                }}
+              >
+                Delete Tour
+              </button>
+            </div>
+          )}
 
           <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
             <p style={{ fontSize: '1.1em', lineHeight: '1.6' }}>{tour.description}</p>
@@ -150,52 +176,31 @@ const TourDetail = () => {
             </div>
           </div>
 
-          <div style={{ marginBottom: '20px' }}>
-            <h4>Select Quantities</h4>
-            {Object.keys(bookingQuantities).map(category => (
-              tour.pricing[category]?.price !== undefined && (
-                <div key={category} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                  <label style={{ textTransform: 'capitalize' }}>
-                    {category} (${tour.pricing[category].price})
-                  </label>
-                  <input
-                    type="number"
-                    min="0"
-                    max={tour.pricing[category].quantity}
-                    value={bookingQuantities[category]}
-                    onChange={(e) => handleQuantityChange(category, e.target.value)}
-                    style={{ width: '80px', padding: '5px' }}
-                  />
-                </div>
-              )
-            ))}
-          </div>
-
-          <div style={{ borderTop: '1px solid #ddd', paddingTop: '15px', marginBottom: '20px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.2em', fontWeight: 'bold' }}>
-              <span>Total:</span>
-              <span>${totalPrice}</span>
-            </div>
-          </div>
-
           <button
             onClick={handleBookTour}
-            disabled={totalPrice === 0}
             style={{
               width: '100%',
               padding: '15px',
-              backgroundColor: totalPrice === 0 ? '#6c757d' : '#28a745',
+              backgroundColor: '#28a745',
               color: 'white',
               border: 'none',
               borderRadius: '4px',
               fontSize: '1.1em',
-              cursor: totalPrice === 0 ? 'not-allowed' : 'pointer'
+              cursor: 'pointer'
             }}
           >
             {user ? 'Book Now' : 'Sign In to Book'}
           </button>
         </div>
       </div>
+
+      {/* Booking Modal */}
+      {showBookingModal && (
+        <BookingForm 
+          tour={tour} 
+          onClose={() => setShowBookingModal(false)} 
+        />
+      )}
     </main>
   );
 };

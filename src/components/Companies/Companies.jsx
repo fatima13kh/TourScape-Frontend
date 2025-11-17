@@ -1,3 +1,4 @@
+// Companies.jsx
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { companyService } from '../../services/companyService';

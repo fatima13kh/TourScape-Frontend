@@ -1,3 +1,4 @@
+// tourService.js
 const BASE_URL = `${import.meta.env.VITE_BACK_END_SERVER_URL}/tours`;
 
 export const tourService = {
@@ -59,6 +60,46 @@ export const tourService = {
     } catch (err) {
       console.log(err);
       throw new Error(err);
+    }
+  },
+
+  //  ADD THIS: Update tour
+  update: async (tourId, tourData) => {
+    try {
+      const res = await fetch(`${BASE_URL}/${tourId}`, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(tourData),
+      });
+      
+      const data = await res.json();
+      if (data.err) throw new Error(data.err);
+      return data;
+    } catch (err) {
+      console.log(err);
+      throw err;
+    }
+  },
+
+  //  ADD THIS: Delete tour
+  delete: async (tourId) => {
+    try {
+      const res = await fetch(`${BASE_URL}/${tourId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+      
+      const data = await res.json();
+      if (data.err) throw new Error(data.err);
+      return data;
+    } catch (err) {
+      console.log(err);
+      throw err;
     }
   }
 };
