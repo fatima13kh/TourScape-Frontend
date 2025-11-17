@@ -2,6 +2,9 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router';
 import { signUp } from '../../services/authService';
 import { UserContext } from '../../contexts/UserContext';
+import './SignUpForm.css';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const SignUpForm = () => {
   const navigate = useNavigate();
@@ -111,7 +114,6 @@ const SignUpForm = () => {
       description: type === 'customer' ? '' : formData.description
     });
     
-    // Clear description error when switching to customer
     if (type === 'customer') {
       setErrors({
         ...errors,
@@ -144,40 +146,27 @@ const SignUpForm = () => {
   const formHasMissingData = !(username && email && phone && password && passwordConf);
 
   return (
-    <main>
+    <>      
+    
+    <Header />
+    <main className="signup-container">
       <h1>Sign Up</h1>
       
       {/* Role Toggle Buttons */}
-      <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+      <div className="role-toggle">
         <h3>I am a:</h3>
-        <div>
+        <div className="role-buttons">
           <button 
             type="button"
             onClick={() => handleUserTypeChange('tourCompany')}
-            style={{
-              padding: '10px 20px',
-              margin: '0 10px',
-              backgroundColor: userType === 'tourCompany' ? '#007bff' : '#f8f9fa',
-              color: userType === 'tourCompany' ? 'white' : 'black',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
+            className={`role-button ${userType === 'tourCompany' ? 'active' : ''}`}
           >
             Tour Company
           </button>
           <button 
             type="button"
             onClick={() => handleUserTypeChange('customer')}
-            style={{
-              padding: '10px 20px',
-              margin: '0 10px',
-              backgroundColor: userType === 'customer' ? '#007bff' : '#f8f9fa',
-              color: userType === 'customer' ? 'white' : 'black',
-              border: '1px solid #ccc',
-              borderRadius: '5px',
-              cursor: 'pointer'
-            }}
+            className={`role-button ${userType === 'customer' ? 'active' : ''}`}
           >
             Customer
           </button>
@@ -185,8 +174,8 @@ const SignUpForm = () => {
       </div>
 
       <p style={{ color: 'red' }}>{message}</p>
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form onSubmit={handleSubmit} className="signup-form">
+        <div className="form-group">
           <label htmlFor="username">Username: </label>
           <input
             id="username"
@@ -195,10 +184,10 @@ const SignUpForm = () => {
             onChange={handleChange}
             required
           />
-          {errors.username && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.username}</p>}
+          {errors.username && <p className="error-message">{errors.username}</p>}
         </div>
         
-        <div>
+        <div className="form-group">
           <label htmlFor="email">Email: </label>
           <input
             type="email"
@@ -208,10 +197,10 @@ const SignUpForm = () => {
             onChange={handleChange}
             required
           />
-          {errors.email && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.email}</p>}
+          {errors.email && <p className="error-message">{errors.email}</p>}
         </div>
         
-        <div>
+        <div className="form-group">
           <label htmlFor="phone">Phone: </label>
           <input
             type="tel"
@@ -222,10 +211,10 @@ const SignUpForm = () => {
             required
             placeholder="12345678 (numbers only)"
           />
-          {errors.phone && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.phone}</p>}
+          {errors.phone && <p className="error-message">{errors.phone}</p>}
         </div>
         
-        <div>
+        <div className="form-group">
           <label htmlFor="password">Password:</label>
           <input
             type="password"
@@ -236,10 +225,10 @@ const SignUpForm = () => {
             required
             placeholder="At least 8 chars with Aa1@"
           />
-          {errors.password && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.password}</p>}
+          {errors.password && <p className="error-message">{errors.password}</p>}
         </div>
         
-        <div>
+        <div className="form-group">
           <label htmlFor="passwordConf">Password Confirmation:</label>
           <input
             type="password"
@@ -249,12 +238,12 @@ const SignUpForm = () => {
             onChange={handleChange}
             required
           />
-          {errors.passwordConf && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.passwordConf}</p>}
+          {errors.passwordConf && <p className="error-message">{errors.passwordConf}</p>}
         </div>
 
         {/* Description - Only for Tour Companies */}
         {userType === 'tourCompany' && (
-          <div>
+          <div className="form-group">
             <label htmlFor="description">Company Description: </label>
             <textarea
               id="description"
@@ -264,20 +253,22 @@ const SignUpForm = () => {
               rows="3"
               placeholder="Tell us about your company (at least 3 words)..."
             />
-            {errors.description && <p className="error" style={{ color: 'red', fontSize: '0.8em', margin: '5px 0' }}>{errors.description}</p>}
+            {errors.description && <p className="error-message">{errors.description}</p>}
           </div>
         )}
 
-        <button type="submit" disabled={formIsInvalid || formHasMissingData}>
+        <button type="submit" className="submit-button" disabled={formIsInvalid || formHasMissingData}>
           Sign Up
         </button>
-        <button type="button" onClick={() => navigate('/')}>Cancel</button>
+        <button type="button" className="cancel-button" onClick={() => navigate('/')}>Cancel</button>
       </form>
       
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
+      <p className="signin-link">
         Already have an account? <Link to='/sign-in'>Sign In</Link>
       </p>
     </main>
+    <Footer />
+    </>
   );
 };
 

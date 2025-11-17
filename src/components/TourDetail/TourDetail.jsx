@@ -3,6 +3,9 @@ import { useParams, Link, useNavigate } from 'react-router';
 import { tourService } from '../../services/tourService';
 import { UserContext } from '../../contexts/UserContext';
 import BookingForm from '../BookingForm/BookingForm';
+import './TourDetail.css';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const TourDetail = () => {
   const { tourId } = useParams();
@@ -56,7 +59,6 @@ const TourDetail = () => {
       await tourService.delete(tourId);
       setMessage({ type: 'success', text: 'Tour deleted successfully' });
       
-      // Navigate to home page after success message
       setTimeout(() => {
         navigate('/');
       }, 1500);
@@ -72,27 +74,21 @@ const TourDetail = () => {
   if (!tour) return <div>Tour not found</div>;
 
   return (
-    <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Link to="/" style={{ marginBottom: '20px', display: 'block' }}>
+    <>
+    <Header />
+    <main className="tour-detail-container">
+      <Link to="/" className="back-link">
         ← Back to Home
       </Link>
 
       {/* Success/Error Messages */}
       {message.text && (
-        <div style={{
-          padding: '12px',
-          backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: message.type === 'success' ? '#155724' : '#721c24',
-          border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
-          borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '0.95em'
-        }}>
+        <div className={`message ${message.type === 'success' ? 'message-success' : 'message-error'}`}>
           {message.text}
         </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '40px' }}>
+      <div className="tour-layout">
         {/* Tour Details */}
         <div>
           <h1>{tour.title}</h1>
@@ -102,44 +98,28 @@ const TourDetail = () => {
 
           {/* Edit/Delete buttons - only show for tour owner */}
           {user && tour.company._id === user._id && (
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div className="tour-actions">
               <button
                 onClick={() => navigate(`/tours/${tourId}/edit`)}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: '#ffc107',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer',
-                  fontWeight: 'bold'
-                }}
+                className="edit-button"
               >
                 Edit Tour
               </button>
               <button
                 onClick={handleDeleteTour}
                 disabled={deleting}
-                style={{
-                  padding: '10px 20px',
-                  backgroundColor: deleting ? '#6c757d' : '#dc3545',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: deleting ? 'not-allowed' : 'pointer',
-                  fontWeight: 'bold'
-                }}
+                className="delete-button"
               >
                 {deleting ? 'Deleting...' : 'Delete Tour'}
               </button>
             </div>
           )}
 
-          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
-            <p style={{ fontSize: '1.1em', lineHeight: '1.6' }}>{tour.description}</p>
+          <div className="tour-description">
+            <p>{tour.description}</p>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px', marginBottom: '30px' }}>
+          <div className="info-grid">
             <div>
               <h3>Tour Information</h3>
               <div style={{ lineHeight: '2' }}>
@@ -185,10 +165,10 @@ const TourDetail = () => {
 
         {/* Booking Section - Only show for customers */}
         {user?.role === 'customer' && (
-          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
+          <div className="booking-section">
             <h3>Book This Tour</h3>
             
-            <div style={{ marginBottom: '20px' }}>
+            <div className="pricing-info">
               <h4>Pricing</h4>
               <div style={{ lineHeight: '2' }}>
                 <div><strong>Adult:</strong> {tour.pricing.adult.price} BHD (Available: {tour.pricing.adult.quantity})</div>
@@ -206,16 +186,7 @@ const TourDetail = () => {
 
             <button
               onClick={handleBookTour}
-              style={{
-                width: '100%',
-                padding: '15px',
-                backgroundColor: '#28a745',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                fontSize: '1.1em',
-                cursor: 'pointer'
-              }}
+              className="book-button"
             >
               Book Now
             </button>
@@ -224,10 +195,10 @@ const TourDetail = () => {
 
         {/* View Details Section - Show for tour companies and unauthenticated users */}
         {(user?.role === 'tourCompany' || !user) && (
-          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
+          <div className="booking-section">
             <h3>Tour Information</h3>
             
-            <div style={{ marginBottom: '20px' }}>
+            <div className="pricing-info">
               <h4>Pricing</h4>
               <div style={{ lineHeight: '2' }}>
                 <div><strong>Adult:</strong> {tour.pricing.adult.price} BHD (Available: {tour.pricing.adult.quantity})</div>
@@ -246,30 +217,14 @@ const TourDetail = () => {
             {!user && (
               <button
                 onClick={() => navigate('/sign-in')}
-                style={{
-                  width: '100%',
-                  padding: '15px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '1.1em',
-                  cursor: 'pointer'
-                }}
+                className="signin-button"
               >
                 Sign In to Book
               </button>
             )}
 
             {user?.role === 'tourCompany' && (
-              <p style={{ 
-                padding: '10px', 
-                backgroundColor: '#fff3cd', 
-                border: '1px solid #ffeaa7',
-                borderRadius: '4px',
-                textAlign: 'center',
-                color: '#856404'
-              }}>
+              <p className="company-message">
                 Cannot book tours as a Tour Company 
               </p>
             )}
@@ -285,6 +240,8 @@ const TourDetail = () => {
         />
       )}
     </main>
+    <Footer />
+    </>
   );
 };
 

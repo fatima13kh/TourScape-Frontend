@@ -2,6 +2,9 @@ import { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import { tourService } from '../../services/tourService';
 import { UserContext } from '../../contexts/UserContext';
+import './TourEdit.css';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const TourEdit = () => {
   const { tourId } = useParams();
@@ -18,7 +21,6 @@ const TourEdit = () => {
     fetchTour();
   }, [tourId]);
 
-  // Calculate duration when dates change
   useEffect(() => {
     if (formData?.tripStartDate && formData?.tripEndDate) {
       const startDate = new Date(formData.tripStartDate);
@@ -41,7 +43,6 @@ const TourEdit = () => {
     try {
       const fetchedTour = await tourService.show(tourId);
       
-      // Check if user is the owner
       if (fetchedTour.company._id !== user._id) {
         navigate('/tours');
         return;
@@ -123,7 +124,6 @@ const TourEdit = () => {
   const validateForm = () => {
     const newErrors = {};
     
-    // Required fields validation
     if (!formData.title.trim()) newErrors.title = 'Title is required';
     if (!formData.description.trim()) newErrors.description = 'Description is required';
     if (!formData.category) newErrors.category = 'Category is required';
@@ -132,7 +132,6 @@ const TourEdit = () => {
     if (!formData.bookingDeadline) newErrors.bookingDeadline = 'Booking deadline is required';
     if (!formData.location.country.trim()) newErrors.country = 'Country is required';
     
-    // Date validation
     if (formData.tripStartDate && formData.tripEndDate && 
         new Date(formData.tripStartDate) >= new Date(formData.tripEndDate)) {
       newErrors.tripEndDate = 'End date must be after start date';
@@ -143,14 +142,11 @@ const TourEdit = () => {
       newErrors.bookingDeadline = 'Booking deadline must be before trip start date';
     }
 
-    // Price validation
     if (formData.pricing.adult.price <= 0) newErrors.adultPrice = 'Adult price must be greater than 0';
     if (formData.pricing.adult.quantity <= 0) newErrors.adultQuantity = 'Adult quantity must be greater than 0';
 
-    // Duration validation
     if (formData.duration.days < 1) newErrors.duration = 'Trip must be at least 1 day long';
 
-    // Cities validation
     const validCities = formData.location.cities.filter(city => city.trim() !== '');
     if (validCities.length === 0) newErrors.cities = 'At least one city is required';
 
@@ -177,33 +173,25 @@ const TourEdit = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading tour...</div>;
-  if (!formData) return <div style={{ padding: '20px' }}>Tour not found</div>;
+  if (loading) return <div className="tour-edit-container">Loading tour...</div>;
+  if (!formData) return <div className="tour-edit-container">Tour not found</div>;
 
   return (
-    <main style={{ padding: '20px', maxWidth: '800px', margin: '0 auto' }}>
+    <>
+      <Header />
+    <main className="tour-edit-container">
       <h1>Edit Tour</h1>
       
-      {/* Error Message Display */}
       {errors.submit && (
-        <div style={{
-          padding: '10px',
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          border: '1px solid #f5c6cb',
-          borderRadius: '4px',
-          marginBottom: '20px'
-        }}>
+        <div className="error-message">
           {errors.submit}
         </div>
       )}
       
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="edit-form">
         {/* Basic Information */}
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor='title' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Tour Title
-          </label>
+        <div className="form-group">
+          <label htmlFor='title'>Tour Title</label>
           <input
             required
             type='text'
@@ -211,15 +199,12 @@ const TourEdit = () => {
             id='title'
             value={formData.title}
             onChange={handleChange}
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
           />
-          {errors.title && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.title}</span>}
+          {errors.title && <span className="field-error">{errors.title}</span>}
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor='description' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Description
-          </label>
+        <div className="form-group">
+          <label htmlFor='description'>Description</label>
           <textarea
             required
             name='description'
@@ -227,22 +212,18 @@ const TourEdit = () => {
             value={formData.description}
             onChange={handleChange}
             rows='4'
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
           />
-          {errors.description && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.description}</span>}
+          {errors.description && <span className="field-error">{errors.description}</span>}
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor='category' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Category
-          </label>
+        <div className="form-group">
+          <label htmlFor='category'>Category</label>
           <select
             required
             name='category'
             id='category'
             value={formData.category}
             onChange={handleChange}
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
           >
             <option value='adventure'>Adventure</option>
             <option value='cultural'>Cultural</option>
@@ -250,29 +231,26 @@ const TourEdit = () => {
             <option value='business'>Business</option>
             <option value='family'>Family</option>
           </select>
-          {errors.category && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.category}</span>}
+          {errors.category && <span className="field-error">{errors.category}</span>}
         </div>
 
         {/* Active Status */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+        <div className="form-group">
+          <label className="checkbox-group">
             <input
               type='checkbox'
               name='isActive'
               checked={formData.isActive}
               onChange={handleChange}
-              style={{ marginRight: '10px' }}
             />
-            <span style={{ fontWeight: 'bold' }}>Tour is Active</span>
+            <span>Tour is Active</span>
           </label>
         </div>
 
         {/* Dates */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '20px' }}>
-          <div>
-            <label htmlFor='tripStartDate' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Start Date
-            </label>
+        <div className="dates-grid">
+          <div className="form-group">
+            <label htmlFor='tripStartDate'>Start Date</label>
             <input
               required
               type='date'
@@ -280,15 +258,12 @@ const TourEdit = () => {
               id='tripStartDate'
               value={formData.tripStartDate}
               onChange={handleChange}
-              style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
             />
-            {errors.tripStartDate && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.tripStartDate}</span>}
+            {errors.tripStartDate && <span className="field-error">{errors.tripStartDate}</span>}
           </div>
           
-          <div>
-            <label htmlFor='tripEndDate' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              End Date
-            </label>
+          <div className="form-group">
+            <label htmlFor='tripEndDate'>End Date</label>
             <input
               required
               type='date'
@@ -296,15 +271,12 @@ const TourEdit = () => {
               id='tripEndDate'
               value={formData.tripEndDate}
               onChange={handleChange}
-              style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
             />
-            {errors.tripEndDate && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.tripEndDate}</span>}
+            {errors.tripEndDate && <span className="field-error">{errors.tripEndDate}</span>}
           </div>
 
-          <div>
-            <label htmlFor='bookingDeadline' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-              Booking Deadline
-            </label>
+          <div className="form-group">
+            <label htmlFor='bookingDeadline'>Booking Deadline</label>
             <input
               required
               type='date'
@@ -312,43 +284,40 @@ const TourEdit = () => {
               id='bookingDeadline'
               value={formData.bookingDeadline}
               onChange={handleChange}
-              style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
             />
-            {errors.bookingDeadline && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.bookingDeadline}</span>}
+            {errors.bookingDeadline && <span className="field-error">{errors.bookingDeadline}</span>}
           </div>
         </div>
 
         {/* Duration (Auto-calculated) */}
-        <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '20px' }}>
-          <h3 style={{ margin: '0 0 10px 0' }}>Duration (Auto-calculated)</h3>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Days</label>
+        <div className="duration-section">
+          <h3>Duration (Auto-calculated)</h3>
+          <div className="duration-grid">
+            <div className="form-group">
+              <label>Days</label>
               <input
                 type='number'
                 value={formData.duration.days}
                 readOnly
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#e9ecef' }}
+                className="duration-input"
               />
             </div>
-            <div>
-              <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nights</label>
+            <div className="form-group">
+              <label>Nights</label>
               <input
                 type='number'
                 value={formData.duration.nights}
                 readOnly
-                style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px', backgroundColor: '#e9ecef' }}
+                className="duration-input"
               />
             </div>
           </div>
-          {errors.duration && <span style={{color: 'red', fontSize: '0.9em', display: 'block', marginTop: '10px'}}>{errors.duration}</span>}
+          {errors.duration && <span className="field-error">{errors.duration}</span>}
         </div>
 
         {/* Location */}
-        <div style={{ marginBottom: '20px' }}>
-          <label htmlFor='country' style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>
-            Country
-          </label>
+        <div className="form-group">
+          <label htmlFor='country'>Country</label>
           <input
             required
             type='text'
@@ -356,15 +325,14 @@ const TourEdit = () => {
             id='country'
             value={formData.location.country}
             onChange={handleChange}
-            style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
           />
-          {errors.country && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.country}</span>}
+          {errors.country && <span className="field-error">{errors.country}</span>}
         </div>
 
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Cities</label>
+        <div className="form-group">
+          <label>Cities</label>
           {formData.location.cities.map((city, index) => (
-            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+            <div key={index} className="array-item">
               <input
                 type='text'
                 value={city}
@@ -377,7 +345,7 @@ const TourEdit = () => {
                   }));
                 }}
                 placeholder='City name'
-                style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="array-input"
               />
               {formData.location.cities.length > 1 && (
                 <button 
@@ -389,7 +357,7 @@ const TourEdit = () => {
                       location: { ...prev.location, cities: newCities }
                     }));
                   }}
-                  style={{ padding: '8px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="remove-button"
                 >
                   Remove
                 </button>
@@ -404,23 +372,23 @@ const TourEdit = () => {
                 location: { ...prev.location, cities: [...prev.location.cities, ''] }
               }));
             }}
-            style={{ padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            className="add-button"
           >
             Add City
           </button>
-          {errors.cities && <span style={{color: 'red', fontSize: '0.9em', display: 'block', marginTop: '10px'}}>{errors.cities}</span>}
+          {errors.cities && <span className="field-error">{errors.cities}</span>}
         </div>
 
         {/* Pricing - All Categories */}
-        <div style={{ marginBottom: '20px' }}>
+        <div className="pricing-section">
           <h3>Pricing (BHD)</h3>
           
           {/* Adult Pricing */}
-          <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Adult</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Price (BHD)</label>
+          <div className="pricing-category">
+            <h4>Adult</h4>
+            <div className="pricing-grid">
+              <div className="form-group">
+                <label>Price (BHD)</label>
                 <input
                   required
                   type='number'
@@ -429,12 +397,11 @@ const TourEdit = () => {
                   onChange={handleChange}
                   min='0'
                   step='0.01'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
-                {errors.adultPrice && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.adultPrice}</span>}
+                {errors.adultPrice && <span className="field-error">{errors.adultPrice}</span>}
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Available Spots</label>
+              <div className="form-group">
+                <label>Available Spots</label>
                 <input
                   required
                   type='number'
@@ -442,19 +409,18 @@ const TourEdit = () => {
                   value={formData.pricing.adult.quantity}
                   onChange={handleChange}
                   min='0'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
-                {errors.adultQuantity && <span style={{color: 'red', fontSize: '0.9em'}}>{errors.adultQuantity}</span>}
+                {errors.adultQuantity && <span className="field-error">{errors.adultQuantity}</span>}
               </div>
             </div>
           </div>
 
           {/* Child Pricing */}
-          <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Child</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Price (BHD)</label>
+          <div className="pricing-category">
+            <h4>Child</h4>
+            <div className="pricing-grid">
+              <div className="form-group">
+                <label>Price (BHD)</label>
                 <input
                   type='number'
                   name='pricing.child.price'
@@ -462,29 +428,27 @@ const TourEdit = () => {
                   onChange={handleChange}
                   min='0'
                   step='0.01'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Available Spots</label>
+              <div className="form-group">
+                <label>Available Spots</label>
                 <input
                   type='number'
                   name='pricing.child.quantity'
                   value={formData.pricing.child.quantity}
                   onChange={handleChange}
                   min='0'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
             </div>
           </div>
 
           {/* Toddler Pricing */}
-          <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Toddler</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Price (BHD)</label>
+          <div className="pricing-category">
+            <h4>Toddler</h4>
+            <div className="pricing-grid">
+              <div className="form-group">
+                <label>Price (BHD)</label>
                 <input
                   type='number'
                   name='pricing.toddler.price'
@@ -492,29 +456,27 @@ const TourEdit = () => {
                   onChange={handleChange}
                   min='0'
                   step='0.01'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Available Spots</label>
+              <div className="form-group">
+                <label>Available Spots</label>
                 <input
                   type='number'
                   name='pricing.toddler.quantity'
                   value={formData.pricing.toddler.quantity}
                   onChange={handleChange}
                   min='0'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
             </div>
           </div>
 
           {/* Baby Pricing */}
-          <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '8px', marginBottom: '15px' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Baby</h4>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Price (BHD)</label>
+          <div className="pricing-category">
+            <h4>Baby</h4>
+            <div className="pricing-grid">
+              <div className="form-group">
+                <label>Price (BHD)</label>
                 <input
                   type='number'
                   name='pricing.baby.price'
@@ -522,18 +484,16 @@ const TourEdit = () => {
                   onChange={handleChange}
                   min='0'
                   step='0.01'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '5px' }}>Available Spots</label>
+              <div className="form-group">
+                <label>Available Spots</label>
                 <input
                   type='number'
                   name='pricing.baby.quantity'
                   value={formData.pricing.baby.quantity}
                   onChange={handleChange}
                   min='0'
-                  style={{ width: '100%', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
                 />
               </div>
             </div>
@@ -541,22 +501,22 @@ const TourEdit = () => {
         </div>
 
         {/* Tour Guides */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Tour Guides</label>
+        <div className="form-group">
+          <label>Tour Guides</label>
           {formData.tourGuides.map((guide, index) => (
-            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+            <div key={index} className="array-item">
               <input
                 type='text'
                 value={guide}
                 onChange={(e) => handleArrayChange(index, e.target.value, 'tourGuides')}
                 placeholder='Guide name'
-                style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="array-input"
               />
               {formData.tourGuides.length > 1 && (
                 <button 
                   type='button' 
                   onClick={() => removeArrayField(index, 'tourGuides')}
-                  style={{ padding: '8px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="remove-button"
                 >
                   Remove
                 </button>
@@ -566,29 +526,29 @@ const TourEdit = () => {
           <button 
             type='button' 
             onClick={() => addArrayField('tourGuides')}
-            style={{ padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            className="add-button"
           >
             Add Guide
           </button>
         </div>
 
         {/* Tours Included */}
-        <div style={{ marginBottom: '20px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Tours Included</label>
+        <div className="form-group">
+          <label>Tours Included</label>
           {formData.toursIncluded.map((tour, index) => (
-            <div key={index} style={{ display: 'flex', gap: '10px', marginBottom: '10px' }}>
+            <div key={index} className="array-item">
               <input
                 type='text'
                 value={tour}
                 onChange={(e) => handleArrayChange(index, e.target.value, 'toursIncluded')}
                 placeholder='Tour activity'
-                style={{ flex: 1, padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                className="array-input"
               />
               {formData.toursIncluded.length > 1 && (
                 <button 
                   type='button' 
                   onClick={() => removeArrayField(index, 'toursIncluded')}
-                  style={{ padding: '8px 12px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+                  className="remove-button"
                 >
                   Remove
                 </button>
@@ -598,27 +558,18 @@ const TourEdit = () => {
           <button 
             type='button' 
             onClick={() => addArrayField('toursIncluded')}
-            style={{ padding: '8px 16px', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}
+            className="add-button"
           >
             Add Activity
           </button>
         </div>
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: '10px', marginTop: '30px' }}>
+        <div className="form-actions">
           <button
             type='submit'
             disabled={submitting}
-            style={{
-              flex: 1,
-              padding: '12px',
-              backgroundColor: submitting ? '#ccc' : '#007bff',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '1.1em',
-              cursor: submitting ? 'not-allowed' : 'pointer'
-            }}
+            className="save-button"
           >
             {submitting ? 'Saving...' : 'Save Changes'}
           </button>
@@ -626,20 +577,15 @@ const TourEdit = () => {
             type='button'
             onClick={() => navigate(`/tours/${tourId}`)}
             disabled={submitting}
-            style={{
-              padding: '12px 24px',
-              backgroundColor: '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: submitting ? 'not-allowed' : 'pointer'
-            }}
+            className="cancel-button"
           >
             Cancel
           </button>
         </div>
       </form>
     </main>
+    <Footer />
+    </>
   );
 };
 

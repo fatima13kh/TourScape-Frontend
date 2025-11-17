@@ -15,6 +15,7 @@ import Tours from './components/Tours/Tours';
 import TourDetail from './components/TourDetail/TourDetail';
 import TourEdit from './components/TourEdit/TourEdit';
 import Profile from './components/Profile/Profile';
+import './App.css';
 
 const App = () => {
   const { user } = useContext(UserContext);

@@ -1,11 +1,10 @@
-// src/components/SignInForm/SignInForm.jsx
-
 import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router';
-
 import { signIn } from '../../services/authService';
-
 import { UserContext } from '../../contexts/UserContext';
+import './SignInForm.css';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const SignInForm = () => {
   const navigate = useNavigate();
@@ -24,10 +23,7 @@ const SignInForm = () => {
   const handleSubmit = async (evt) => {
     evt.preventDefault();
     try {
-      // This function doesn't exist yet, but we'll create it soon.
-      // It will cause an error right now
       const signedInUser = await signIn(formData);
-
       setUser(signedInUser);
       navigate('/');
     } catch (err) {
@@ -36,11 +32,13 @@ const SignInForm = () => {
   };
 
   return (
-    <main>
+    <>
+      <Header />
+    <main className="signin-container">
       <h1>Sign In</h1>
       <p>{message}</p>
-      <form autoComplete='off' onSubmit={handleSubmit}>
-        <div>
+      <form autoComplete='off' onSubmit={handleSubmit} className="signin-form">
+        <div className="form-group">
           <label htmlFor='username'>Username:</label>
           <input
             type='text'
@@ -52,7 +50,7 @@ const SignInForm = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor='password'>Password:</label>
           <input
             type='password'
@@ -64,18 +62,19 @@ const SignInForm = () => {
             required
           />
         </div>
-        <div>
-          <button>Sign In</button>
-          <button onClick={() => navigate('/')}>Cancel</button>
+        <div className="button-group">
+          <button className="submit-button">Sign In</button>
+          <button type="button" className="cancel-button" onClick={() => navigate('/')}>Cancel</button>
         </div>
       </form>
 
-      <p style={{ marginTop: '20px', textAlign: 'center' }}>
+      <p className="signup-link">
         Don't have an account? <Link to='/sign-up'>Sign Up</Link>
       </p>
     </main>
+    <Footer />
+    </>
   );
 };
 
 export default SignInForm;
-

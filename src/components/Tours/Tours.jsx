@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { tourService } from '../../services/tourService';
+import './Tours.css';
 
 const Tours = () => {
   const [tours, setTours] = useState([]);
@@ -35,120 +36,63 @@ const Tours = () => {
   if (error) return <div>{error}</div>;
 
   return (
-    <main style={{ padding: '20px' }}>
+    <main className="tours-container">
       <h1>All Tours</h1>
       
-      {/* Category Filter */}
-      <div style={{ 
-        backgroundColor: '#f8f9fa', 
-        padding: '20px', 
-        borderRadius: '8px',
-        marginBottom: '30px'
-      }}>
+      <div className="filter-section">
         <h3>Filter by Category</h3>
-        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+        <div className="filter-buttons">
           <button
             onClick={() => handleCategoryChange('')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === '' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === '' ? 'active' : ''}`}
           >
             All Tours
           </button>
           <button
             onClick={() => handleCategoryChange('adventure')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'adventure' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === 'adventure' ? 'active' : ''}`}
           >
             Adventure
           </button>
           <button
             onClick={() => handleCategoryChange('cultural')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'cultural' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === 'cultural' ? 'active' : ''}`}
           >
             Cultural
           </button>
           <button
             onClick={() => handleCategoryChange('relaxation')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'relaxation' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === 'relaxation' ? 'active' : ''}`}
           >
             Relaxation
           </button>
           <button
             onClick={() => handleCategoryChange('business')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'business' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === 'business' ? 'active' : ''}`}
           >
             Business
           </button>
           <button
             onClick={() => handleCategoryChange('family')}
-            style={{
-              padding: '8px 16px',
-              backgroundColor: selectedCategory === 'family' ? '#007bff' : '#6c757d',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
+            className={`filter-button ${selectedCategory === 'family' ? 'active' : ''}`}
           >
             Family
           </button>
         </div>
       </div>
 
-      {/* Tours List */}
-      <div style={{ display: 'grid', gap: '20px' }}>
+      <div className="tours-grid">
         {tours.map(tour => (
-          <div 
-            key={tour._id}
-            style={{
-              border: '1px solid #ddd',
-              borderRadius: '8px',
-              padding: '20px',
-              backgroundColor: 'white'
-            }}
-          >
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-              <div style={{ flex: 1 }}>
+          <div key={tour._id} className="tour-card">
+            <div className="tour-header">
+              <div className="tour-content">
                 <h3>{tour.title}</h3>
-                <p style={{ margin: '10px 0', color: '#666' }}>
+                <p className="tour-company">
                   by <strong>{tour.company?.username}</strong>
                 </p>
-                <p style={{ margin: '10px 0' }}>{tour.description}</p>
+                <p>{tour.description}</p>
                 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', margin: '15px 0' }}>
+                <div className="tour-info-grid">
                   <div>
                     <strong>Category:</strong> {tour.category}
                   </div>
@@ -163,7 +107,7 @@ const Tours = () => {
                   </div>
                 </div>
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', margin: '15px 0' }}>
+                <div className="tour-info-grid">
                   <div>
                     <strong>Start Date:</strong> {new Date(tour.tripStartDate).toLocaleDateString()}
                   </div>
@@ -176,30 +120,14 @@ const Tours = () => {
                 </div>
               </div>
               
-              <div style={{ marginLeft: '20px' }}>
+              <div className="tour-actions">
                 <Link to={`/tours/${tour._id}`}>
-                  <button style={{ 
-                    padding: '10px 20px', 
-                    backgroundColor: '#007bff', 
-                    color: 'white', 
-                    border: 'none', 
-                    borderRadius: '4px',
-                    cursor: 'pointer'
-                  }}>
+                  <button className="view-details-button">
                     View Details
                   </button>
                 </Link>
                 <Link to={`/companies/${tour.company?._id}`}>
-                  <button style={{ 
-                    padding: '10px 20px', 
-                    backgroundColor: '#6c757d', 
-                    color: 'white', 
-                    border: 'none', 
-                    borderRadius: '4px',
-                    cursor: 'pointer',
-                    marginTop: '10px',
-                    width: '100%'
-                  }}>
+                  <button className="view-company-button">
                     View Company
                   </button>
                 </Link>

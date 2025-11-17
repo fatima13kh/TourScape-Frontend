@@ -3,6 +3,9 @@ import { Link } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
 import { bookingService } from '../../services/bookingService';
 import { tourService } from '../../services/tourService';
+import './Profile.css';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
 
 const Profile = () => {
   const { user } = useContext(UserContext);
@@ -34,7 +37,6 @@ const Profile = () => {
   const fetchCompanyTours = async () => {
     try {
       const allTours = await tourService.index();
-      // Filter tours to only show the ones created by this company
       const companyTours = allTours.filter(tour => tour.company._id === user._id);
       setTours(companyTours);
     } catch (err) {
@@ -94,7 +96,6 @@ const Profile = () => {
     try {
       await tourService.delete(tourId);
       setMessage({ type: 'success', text: 'Tour deleted successfully' });
-      // Remove the deleted tour from the list
       setTours(prevTours => prevTours.filter(tour => tour._id !== tourId));
     } catch (err) {
       setMessage({ type: 'error', text: err.message || 'Failed to delete tour' });
@@ -103,34 +104,28 @@ const Profile = () => {
     }
   };
 
-  if (loading) return <div style={{ padding: '20px' }}>Loading profile...</div>;
+  if (loading) return <div className="profile-container">Loading profile...</div>;
 
   return (
-    <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
+    <>
+     <Header />
+    <main className="profile-container">
       <h1>Profile</h1>
       
       {/* Success/Error Messages */}
       {message.text && (
-        <div style={{
-          padding: '12px',
-          backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: message.type === 'success' ? '#155724' : '#721c24',
-          border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
-          borderRadius: '4px',
-          marginBottom: '20px',
-          fontSize: '0.95em'
-        }}>
+        <div className={`message ${message.type === 'success' ? 'message-success' : 'message-error'}`}>
           {message.text}
         </div>
       )}
       
       {/* User Info */}
-      <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', marginBottom: '30px' }}>
+      <div className="user-info">
         <h2>{user.username}</h2>
-        <div style={{ marginTop: '10px' }}>
+        <div>
           <strong>Email:</strong> {user.email || 'N/A'}
         </div>
-        <div style={{ marginTop: '5px' }}>
+        <div>
           <strong>Role:</strong> {user.role}
         </div>
       </div>
@@ -141,47 +136,26 @@ const Profile = () => {
           <h2>My Bookings</h2>
           
           {bookings.length === 0 ? (
-            <div style={{ 
-              padding: '40px', 
-              textAlign: 'center', 
-              backgroundColor: '#f8f9fa', 
-              borderRadius: '8px' 
-            }}>
-              <p style={{ fontSize: '1.2em', color: '#666' }}>No bookings yet</p>
+            <div className="empty-state">
+              <p className="empty-state-text">No bookings yet</p>
               <Link to="/">
-                <button style={{
-                  marginTop: '20px',
-                  padding: '10px 20px',
-                  backgroundColor: '#007bff',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}>
+                <button className="browse-button">
                   Browse Tours
                 </button>
               </Link>
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '20px' }}>
+            <div className="bookings-grid">
               {bookings.map((booking, index) => (
-                <div 
-                  key={booking._id || index}
-                  style={{
-                    border: '1px solid #ddd',
-                    borderRadius: '8px',
-                    padding: '20px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                    <div style={{ flex: 1 }}>
+                <div key={booking._id || index} className="booking-card">
+                  <div className="booking-content">
+                    <div className="booking-details">
                       <h3>{booking.tour?.title}</h3>
                       <p style={{ color: '#666', margin: '10px 0' }}>
                         {booking.tour?.description}
                       </p>
                       
-                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', margin: '15px 0' }}>
+                      <div className="info-grid">
                         <div>
                           <strong>Booking Date:</strong><br />
                           {new Date(booking.bookedAt).toLocaleDateString()}
@@ -196,9 +170,9 @@ const Profile = () => {
                         </div>
                       </div>
 
-                      <div style={{ backgroundColor: '#f8f9fa', padding: '15px', borderRadius: '4px', marginTop: '15px' }}>
+                      <div className="quantities-section">
                         <strong>Quantities:</strong>
-                        <div style={{ display: 'flex', gap: '20px', marginTop: '10px' }}>
+                        <div className="quantities-list">
                           {booking.quantities.adults > 0 && <span>Adults: {booking.quantities.adults}</span>}
                           {booking.quantities.children > 0 && <span>Children: {booking.quantities.children}</span>}
                           {booking.quantities.toddlers > 0 && <span>Toddlers: {booking.quantities.toddlers}</span>}
@@ -207,20 +181,12 @@ const Profile = () => {
                       </div>
                     </div>
 
-                    <div style={{ marginLeft: '20px', textAlign: 'right' }}>
-                      <div style={{ fontSize: '1.5em', fontWeight: 'bold', color: '#28a745' }}>
+                    <div className="booking-price">
+                      <div className="price-amount">
                         ${booking.totalPaid}
                       </div>
                       <Link to={`/tours/${booking.tour?._id}`}>
-                        <button style={{
-                          marginTop: '15px',
-                          padding: '8px 16px',
-                          backgroundColor: '#007bff',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '4px',
-                          cursor: 'pointer'
-                        }}>
+                        <button className="view-tour-button">
                           View Tour
                         </button>
                       </Link>
@@ -239,51 +205,30 @@ const Profile = () => {
           <h2>My Tours & Bookings</h2>
           
           {tours.length === 0 ? (
-            <div style={{ 
-              padding: '40px', 
-              textAlign: 'center', 
-              backgroundColor: '#f8f9fa', 
-              borderRadius: '8px' 
-            }}>
-              <p style={{ fontSize: '1.2em', color: '#666' }}>No tours created yet</p>
+            <div className="empty-state">
+              <p className="empty-state-text">No tours created yet</p>
               <Link to="/tours/new">
-                <button style={{
-                  marginTop: '20px',
-                  padding: '10px 20px',
-                  backgroundColor: '#28a745',
-                  color: 'white',
-                  border: 'none',
-                  borderRadius: '4px',
-                  cursor: 'pointer'
-                }}>
+                <button className="browse-button">
                   Create Your First Tour
                 </button>
               </Link>
             </div>
           ) : (
-            <div style={{ display: 'grid', gap: '20px' }}>
+            <div className="bookings-grid">
               {tours.map((tour) => {
                 const stats = calculateTourStats(tour);
                 const hasBookings = stats.totalBookings > 0;
                 
                 return (
-                  <div 
-                    key={tour._id}
-                    style={{
-                      border: '1px solid #ddd',
-                      borderRadius: '8px',
-                      padding: '20px',
-                      backgroundColor: 'white'
-                    }}
-                  >
-                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
-                      <div style={{ flex: 1 }}>
+                  <div key={tour._id} className="tour-card">
+                    <div className="booking-content">
+                      <div className="booking-details">
                         <h3>{tour.title}</h3>
                         <p style={{ color: '#666', margin: '10px 0' }}>
                           {tour.description}
                         </p>
                         
-                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', margin: '15px 0' }}>
+                        <div className="info-grid">
                           <div>
                             <strong>Category:</strong><br />
                             {tour.category}
@@ -309,16 +254,10 @@ const Profile = () => {
 
                         {/* Booking Statistics */}
                         {hasBookings && (
-                          <div style={{ 
-                            backgroundColor: '#e8f5e8', 
-                            padding: '15px', 
-                            borderRadius: '4px', 
-                            marginTop: '15px',
-                            border: '1px solid #28a745'
-                          }}>
-                            <h4 style={{ margin: '0 0 15px 0', color: '#155724' }}>Booking Statistics</h4>
+                          <div className="stats-section">
+                            <h4 className="stats-title">Booking Statistics</h4>
                             
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px', marginBottom: '15px' }}>
+                            <div className="stats-grid">
                               <div>
                                 <strong>Total Bookings:</strong><br />
                                 <span style={{ fontSize: '1.2em', fontWeight: 'bold' }}>{stats.totalBookings}</span>
@@ -333,24 +272,24 @@ const Profile = () => {
 
                             <div>
                               <strong>Total Attendees:</strong>
-                              <div style={{ display: 'flex', gap: '20px', marginTop: '10px', flexWrap: 'wrap' }}>
+                              <div className="quantities-list">
                                 {stats.quantities.adults > 0 && (
-                                  <span style={{ backgroundColor: '#007bff', color: 'white', padding: '5px 10px', borderRadius: '4px' }}>
+                                  <span className="attendee-badge">
                                     Adults: {stats.quantities.adults}
                                   </span>
                                 )}
                                 {stats.quantities.children > 0 && (
-                                  <span style={{ backgroundColor: '#28a745', color: 'white', padding: '5px 10px', borderRadius: '4px' }}>
+                                  <span className="attendee-badge attendee-badge-child">
                                     Children: {stats.quantities.children}
                                   </span>
                                 )}
                                 {stats.quantities.toddlers > 0 && (
-                                  <span style={{ backgroundColor: '#ffc107', color: 'black', padding: '5px 10px', borderRadius: '4px' }}>
+                                  <span className="attendee-badge attendee-badge-toddler">
                                     Toddlers: {stats.quantities.toddlers}
                                   </span>
                                 )}
                                 {stats.quantities.babies > 0 && (
-                                  <span style={{ backgroundColor: '#6c757d', color: 'white', padding: '5px 10px', borderRadius: '4px' }}>
+                                  <span className="attendee-badge attendee-badge-baby">
                                     Babies: {stats.quantities.babies}
                                   </span>
                                 )}
@@ -373,31 +312,15 @@ const Profile = () => {
                         )}
                       </div>
 
-                      <div style={{ marginLeft: '20px', textAlign: 'right', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      <div className="tour-actions">
                         <Link to={`/tours/${tour._id}`}>
-                          <button style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#007bff',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            width: '120px'
-                          }}>
+                          <button className="action-button view-tour-button">
                             View Tour
                           </button>
                         </Link>
                         
                         <Link to={`/tours/${tour._id}/edit`}>
-                          <button style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#ffc107',
-                            color: 'black',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            width: '120px'
-                          }}>
+                          <button className="action-button edit-button">
                             Edit Tour
                           </button>
                         </Link>
@@ -407,31 +330,14 @@ const Profile = () => {
                           <button 
                             onClick={() => handleDeleteTour(tour._id)}
                             disabled={deletingTourId === tour._id}
-                            style={{
-                              padding: '8px 16px',
-                              backgroundColor: deletingTourId === tour._id ? '#6c757d' : '#dc3545',
-                              color: 'white',
-                              border: 'none',
-                              borderRadius: '4px',
-                              cursor: deletingTourId === tour._id ? 'not-allowed' : 'pointer',
-                              width: '120px'
-                            }}
+                            className={`action-button delete-button ${deletingTourId === tour._id ? 'disabled' : ''}`}
                           >
                             {deletingTourId === tour._id ? 'Deleting...' : 'Delete Tour'}
                           </button>
                         )}
 
                         {hasBookings && (
-                          <div style={{
-                            padding: '8px 16px',
-                            backgroundColor: '#f8f9fa',
-                            color: '#6c757d',
-                            border: '1px solid #dee2e6',
-                            borderRadius: '4px',
-                            fontSize: '0.8em',
-                            textAlign: 'center',
-                            width: '120px'
-                          }}>
+                          <div className="cannot-delete">
                             Cannot delete (has bookings)
                           </div>
                         )}
@@ -445,6 +351,8 @@ const Profile = () => {
         </div>
       )}
     </main>
+    <Footer />
+    </>
   );
 };
 
