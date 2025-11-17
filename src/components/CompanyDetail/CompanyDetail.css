@@ -1,0 +1,83 @@
+.company-detail-container {
+  padding: 20px;
+}
+
+.back-link {
+  margin-bottom: 20px;
+  display: block;
+}
+
+.company-header {
+  background-color: #f0f0f0;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.company-description {
+  font-size: 1.1em;
+  margin: 15px 0;
+}
+
+.contact-info {
+  margin: 10px 0;
+}
+
+.tours-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.tour-card {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: white;
+}
+
+.tour-info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.view-details-button {
+  padding: 10px 20px;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .company-detail-container {
+    padding: 15px;
+  }
+
+  .company-header {
+    padding: 15px;
+  }
+
+  .tour-info-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .tour-card {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .company-detail-container {
+    padding: 10px;
+  }
+
+  .company-header h1 {
+    font-size: 1.5em;
+  }
+}

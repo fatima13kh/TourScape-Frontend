@@ -1,0 +1,57 @@
+/* Global styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Utility classes */
+.text-center {
+  text-align: center;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mb-20 {
+  margin-bottom: 20px;
+}
+
+.error-text {
+  color: red;
+  font-size: 0.9em;
+}
+
+/*  Responsive */
+@media (max-width: 768px) {
+  main {
+    padding: 0 10px;
+  }
+}
+
+/* Utility classes for responsive design */
+.mobile-hidden {
+  display: block;
+}
+
+.mobile-only {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .mobile-hidden {
+    display: none;
+  }
+
+  .mobile-only {
+    display: block;
+  }
+}

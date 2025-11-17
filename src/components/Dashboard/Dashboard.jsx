@@ -1,34 +1,40 @@
-// src/components/Dashboard/Dashboard.jsx
-
-import { useContext, useEffect } from 'react';
-import * as userService from '../../services/userService'
+import { useContext } from 'react';
+import { Link } from 'react-router';
 import { UserContext } from '../../contexts/UserContext';
+import Tours from '../Tours/Tours';
+import Header from '../Header/Header';
+import Footer from '../Footer/Footer';
+import './Dashboard.css';
 
 const Dashboard = () => {
   const { user } = useContext(UserContext);
 
-   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const fetchedUsers = await userService.index();
-        console.log(fetchedUsers);
-      } catch (err) {
-        console.log(err)
-      }
-    }
-    if (user) fetchUsers();
-  }, [user]);
-
-
   return (
-    <main>
-      <h1>Welcome, {user.username}</h1>
-      <p>
-        This is the dashboard page where you can see a list of all the users.
-      </p>
-    </main>
+    <>
+      <Header />
+      
+      <main className="dashboard-container">
+        <div className="dashboard-content">
+          <h1>Welcome, {user.username}</h1>
+          {/* Show Create Tour button only for tour companies */}
+          {user?.role === 'tourCompany' && (
+            <div>
+              <Link to="/tours/new">
+                <button className="create-tour-button">
+                  CREATE TOUR
+                </button>
+              </Link>
+            </div>
+          )}
+
+          {/* Use the existing Tours component */}
+          <Tours />
+        </div>
+      </main>
+      
+      <Footer />
+    </>
   );
 };
 
 export default Dashboard;
-
