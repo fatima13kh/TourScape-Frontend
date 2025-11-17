@@ -180,7 +180,7 @@ const Profile = () => {
 
                     <div className="booking-price">
                       <div className="price-amount">
-                        ${booking.totalPaid}
+                        {booking.totalPaid} BHD
                       </div>
                       <Link to={`/tours/${booking.tour?._id}`}>
                         <button className="view-tour-button">
