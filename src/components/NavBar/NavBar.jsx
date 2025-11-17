@@ -28,11 +28,12 @@ const NavBar = () => {
       <ul>
         {/* ALWAYS SHOW - Home, Tours & Companies for everyone */}
         <li><Link to='/'>Home</Link></li>
-        <li><Link to='/tours'>Tours</Link></li>
-        <li><Link to='/companies'>Companies</Link></li>
+
         
         {/* Conditional: Profile (only when signed in) */}
+        {user && <li><Link to='/companies'>Companies</Link></li>}
         {user && <li><Link to='/profile'>Profile</Link></li>}
+         
         
         {/* ALWAYS SHOW - Sign In/Sign Out */}
         {user ? (

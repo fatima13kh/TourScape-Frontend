@@ -41,7 +41,6 @@ const App = () => {
         <Route path='/companies/:companyId' element={<CompanyDetail />} />
         
         {/* Tours routes */}
-        <Route path='/tours' element={<Tours />} />
         <Route path='/tours/:tourId' element={<TourDetail />} />
         
         {/* Conditional routes based on authentication */}
@@ -50,9 +49,6 @@ const App = () => {
             <Route path='/' element={<Dashboard/>}/>
             <Route path='/profile' element={<Profile />} />
             <Route path='/tours/:tourId/edit' element={<TourEdit />} />
-            <Route path='/products' element={<h1>Products</h1>}/>
-            <Route path='/favs' element={<h1>Favs</h1>}/>
-            <Route path='/orders' element={<h1>ORDERS</h1>}/>
           </>
         ) : (
           <Route path='/' element={<Landing/>}/>

@@ -11,7 +11,9 @@ const TourDetail = () => {
   const [tour, setTour] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [message, setMessage] = useState({ type: '', text: '' });
   const [showBookingModal, setShowBookingModal] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     const fetchTour = async () => {
@@ -34,25 +36,34 @@ const TourDetail = () => {
       navigate('/sign-in');
       return;
     }
+    if (user.role !== 'customer') {
+      setMessage({ type: 'error', text: 'Only customers can book tours' });
+      return;
+    }
     setShowBookingModal(true);
   };
 
   const handleDeleteTour = async () => {
-    if (!window.confirm('Are you sure you want to delete this tour? This action cannot be undone.')) {
+    if (tour.attendees && tour.attendees.length > 0) {
+      setMessage({ type: 'error', text: 'Cannot delete tour with existing bookings' });
       return;
     }
 
-    if (tour.attendees && tour.attendees.length > 0) {
-      alert('Cannot delete tour with existing bookings');
-      return;
-    }
+    setDeleting(true);
+    setMessage({ type: '', text: '' });
 
     try {
       await tourService.delete(tourId);
-      alert('Tour deleted successfully');
-      navigate('/tours');
+      setMessage({ type: 'success', text: 'Tour deleted successfully' });
+      
+      // Navigate to home page after success message
+      setTimeout(() => {
+        navigate('/');
+      }, 1500);
     } catch (err) {
-      alert(err.message || 'Failed to delete tour');
+      setMessage({ type: 'error', text: err.message || 'Failed to delete tour' });
+    } finally {
+      setDeleting(false);
     }
   };
 
@@ -62,9 +73,24 @@ const TourDetail = () => {
 
   return (
     <main style={{ padding: '20px', maxWidth: '1200px', margin: '0 auto' }}>
-      <Link to="/tours" style={{ marginBottom: '20px', display: 'block' }}>
-        ← Back to Tours
+      <Link to="/" style={{ marginBottom: '20px', display: 'block' }}>
+        ← Back to Home
       </Link>
+
+      {/* Success/Error Messages */}
+      {message.text && (
+        <div style={{
+          padding: '12px',
+          backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+          color: message.type === 'success' ? '#155724' : '#721c24',
+          border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+          borderRadius: '4px',
+          marginBottom: '20px',
+          fontSize: '0.95em'
+        }}>
+          {message.text}
+        </div>
+      )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 400px', gap: '40px' }}>
         {/* Tour Details */}
@@ -93,17 +119,18 @@ const TourDetail = () => {
               </button>
               <button
                 onClick={handleDeleteTour}
+                disabled={deleting}
                 style={{
                   padding: '10px 20px',
-                  backgroundColor: '#dc3545',
+                  backgroundColor: deleting ? '#6c757d' : '#dc3545',
                   color: 'white',
                   border: 'none',
                   borderRadius: '4px',
-                  cursor: 'pointer',
+                  cursor: deleting ? 'not-allowed' : 'pointer',
                   fontWeight: 'bold'
                 }}
               >
-                Delete Tour
+                {deleting ? 'Deleting...' : 'Delete Tour'}
               </button>
             </div>
           )}
@@ -156,42 +183,98 @@ const TourDetail = () => {
           )}
         </div>
 
-        {/* Booking Section */}
-        <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
-          <h3>Book This Tour</h3>
-          
-          <div style={{ marginBottom: '20px' }}>
-            <h4>Pricing</h4>
-            <div style={{ lineHeight: '2' }}>
-              <div><strong>Adult:</strong> ${tour.pricing.adult.price} (Available: {tour.pricing.adult.quantity})</div>
-              {tour.pricing.child?.price > 0 && (
-                <div><strong>Child:</strong> ${tour.pricing.child.price} (Available: {tour.pricing.child.quantity})</div>
-              )}
-              {tour.pricing.toddler?.price > 0 && (
-                <div><strong>Toddler:</strong> ${tour.pricing.toddler.price} (Available: {tour.pricing.toddler.quantity})</div>
-              )}
-              {tour.pricing.baby?.price > 0 && (
-                <div><strong>Baby:</strong> ${tour.pricing.baby.price} (Available: {tour.pricing.baby.quantity})</div>
-              )}
+        {/* Booking Section - Only show for customers */}
+        {user?.role === 'customer' && (
+          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
+            <h3>Book This Tour</h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <h4>Pricing</h4>
+              <div style={{ lineHeight: '2' }}>
+                <div><strong>Adult:</strong> {tour.pricing.adult.price} BHD (Available: {tour.pricing.adult.quantity})</div>
+                {tour.pricing.child?.price > 0 && (
+                  <div><strong>Child:</strong> {tour.pricing.child.price} BHD (Available: {tour.pricing.child.quantity})</div>
+                )}
+                {tour.pricing.toddler?.price > 0 && (
+                  <div><strong>Toddler:</strong> {tour.pricing.toddler.price} BHD (Available: {tour.pricing.toddler.quantity})</div>
+                )}
+                {tour.pricing.baby?.price > 0 && (
+                  <div><strong>Baby:</strong> {tour.pricing.baby.price} BHD (Available: {tour.pricing.baby.quantity})</div>
+                )}
+              </div>
             </div>
-          </div>
 
-          <button
-            onClick={handleBookTour}
-            style={{
-              width: '100%',
-              padding: '15px',
-              backgroundColor: '#28a745',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '1.1em',
-              cursor: 'pointer'
-            }}
-          >
-            {user ? 'Book Now' : 'Sign In to Book'}
-          </button>
-        </div>
+            <button
+              onClick={handleBookTour}
+              style={{
+                width: '100%',
+                padding: '15px',
+                backgroundColor: '#28a745',
+                color: 'white',
+                border: 'none',
+                borderRadius: '4px',
+                fontSize: '1.1em',
+                cursor: 'pointer'
+              }}
+            >
+              Book Now
+            </button>
+          </div>
+        )}
+
+        {/* View Details Section - Show for tour companies and unauthenticated users */}
+        {(user?.role === 'tourCompany' || !user) && (
+          <div style={{ backgroundColor: '#f8f9fa', padding: '20px', borderRadius: '8px', height: 'fit-content' }}>
+            <h3>Tour Information</h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <h4>Pricing</h4>
+              <div style={{ lineHeight: '2' }}>
+                <div><strong>Adult:</strong> {tour.pricing.adult.price} BHD (Available: {tour.pricing.adult.quantity})</div>
+                {tour.pricing.child?.price > 0 && (
+                  <div><strong>Child:</strong> {tour.pricing.child.price} BHD (Available: {tour.pricing.child.quantity})</div>
+                )}
+                {tour.pricing.toddler?.price > 0 && (
+                  <div><strong>Toddler:</strong> {tour.pricing.toddler.price} BHD (Available: {tour.pricing.toddler.quantity})</div>
+                )}
+                {tour.pricing.baby?.price > 0 && (
+                  <div><strong>Baby:</strong> {tour.pricing.baby.price} BHD (Available: {tour.pricing.baby.quantity})</div>
+                )}
+              </div>
+            </div>
+
+            {!user && (
+              <button
+                onClick={() => navigate('/sign-in')}
+                style={{
+                  width: '100%',
+                  padding: '15px',
+                  backgroundColor: '#007bff',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  fontSize: '1.1em',
+                  cursor: 'pointer'
+                }}
+              >
+                Sign In to Book
+              </button>
+            )}
+
+            {user?.role === 'tourCompany' && (
+              <p style={{ 
+                padding: '10px', 
+                backgroundColor: '#fff3cd', 
+                border: '1px solid #ffeaa7',
+                borderRadius: '4px',
+                textAlign: 'center',
+                color: '#856404'
+              }}>
+                Cannot book tours as a Tour Company 
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Booking Modal */}

@@ -1,4 +1,3 @@
-// Tours
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { tourService } from '../../services/tourService';
@@ -7,20 +6,16 @@ const Tours = () => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [filters, setFilters] = useState({
-    category: '',
-    country: '',
-    city: '',
-    price: ''
-  });
+  const [selectedCategory, setSelectedCategory] = useState('');
 
   useEffect(() => {
     fetchTours();
   }, []);
 
-  const fetchTours = async (filterParams = {}) => {
+  const fetchTours = async (category = '') => {
     try {
       setLoading(true);
+      const filterParams = category ? { category } : {};
       const fetchedTours = await tourService.index(filterParams);
       setTours(fetchedTours);
     } catch (err) {
@@ -31,16 +26,9 @@ const Tours = () => {
     }
   };
 
-  const handleFilterChange = (key, value) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    fetchTours(newFilters);
-  };
-
-  const clearFilters = () => {
-    const emptyFilters = { category: '', country: '', city: '', price: '' };
-    setFilters(emptyFilters);
-    fetchTours(emptyFilters);
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+    fetchTours(category);
   };
 
   if (loading) return <div>Loading tours...</div>;
@@ -50,78 +38,94 @@ const Tours = () => {
     <main style={{ padding: '20px' }}>
       <h1>All Tours</h1>
       
-      {/* Filters */}
+      {/* Category Filter */}
       <div style={{ 
         backgroundColor: '#f8f9fa', 
         padding: '20px', 
         borderRadius: '8px',
         marginBottom: '30px'
       }}>
-        <h3>Filter Tours</h3>
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '15px' }}>
-          <div>
-            <label>Category:</label>
-            <select 
-              value={filters.category} 
-              onChange={(e) => handleFilterChange('category', e.target.value)}
-              style={{ width: '100%', padding: '8px' }}
-            >
-              <option value="">All Categories</option>
-              <option value="adventure">Adventure</option>
-              <option value="cultural">Cultural</option>
-              <option value="relaxation">Relaxation</option>
-              <option value="business">Business</option>
-              <option value="family">Family</option>
-            </select>
-          </div>
-          
-          <div>
-            <label>Country:</label>
-            <input
-              type="text"
-              value={filters.country}
-              onChange={(e) => handleFilterChange('country', e.target.value)}
-              placeholder="Enter country"
-              style={{ width: '100%', padding: '8px' }}
-            />
-          </div>
-          
-          <div>
-            <label>City:</label>
-            <input
-              type="text"
-              value={filters.city}
-              onChange={(e) => handleFilterChange('city', e.target.value)}
-              placeholder="Enter city"
-              style={{ width: '100%', padding: '8px' }}
-            />
-          </div>
-          
-          <div>
-            <label>Max Price:</label>
-            <input
-              type="number"
-              value={filters.price}
-              onChange={(e) => handleFilterChange('price', e.target.value)}
-              placeholder="Max price"
-              style={{ width: '100%', padding: '8px' }}
-            />
-          </div>
+        <h3>Filter by Category</h3>
+        <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            onClick={() => handleCategoryChange('')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === '' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            All Tours
+          </button>
+          <button
+            onClick={() => handleCategoryChange('adventure')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === 'adventure' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Adventure
+          </button>
+          <button
+            onClick={() => handleCategoryChange('cultural')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === 'cultural' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Cultural
+          </button>
+          <button
+            onClick={() => handleCategoryChange('relaxation')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === 'relaxation' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Relaxation
+          </button>
+          <button
+            onClick={() => handleCategoryChange('business')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === 'business' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Business
+          </button>
+          <button
+            onClick={() => handleCategoryChange('family')}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: selectedCategory === 'family' ? '#007bff' : '#6c757d',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              cursor: 'pointer'
+            }}
+          >
+            Family
+          </button>
         </div>
-        <button 
-          onClick={clearFilters}
-          style={{ 
-            marginTop: '15px', 
-            padding: '8px 16px', 
-            backgroundColor: '#6c757d', 
-            color: 'white', 
-            border: 'none', 
-            borderRadius: '4px',
-            cursor: 'pointer'
-          }}
-        >
-          Clear Filters
-        </button>
       </div>
 
       {/* Tours List */}
@@ -168,7 +172,7 @@ const Tours = () => {
                   </div>
                   <div>
                     <strong>Booking Deadline:</strong> {new Date(tour.bookingDeadline).toLocaleDateString()}
-                  </div>
+                  </div> 
                 </div>
               </div>
               
@@ -206,7 +210,7 @@ const Tours = () => {
       </div>
 
       {tours.length === 0 && (
-        <p>No tours found matching your criteria.</p>
+        <p>No tours found{selectedCategory && ` in ${selectedCategory} category`}.</p>
       )}
     </main>
   );

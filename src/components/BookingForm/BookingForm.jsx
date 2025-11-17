@@ -5,6 +5,7 @@ import { bookingService } from '../../services/bookingService';
 const BookingForm = ({ tour, onClose }) => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: '', text: '' });
   const [quantities, setQuantities] = useState({
     adults: 1,
     children: 0,
@@ -14,7 +15,18 @@ const BookingForm = ({ tour, onClose }) => {
 
   const handleQuantityChange = (category, value) => {
     const numValue = parseInt(value) || 0;
-    const maxQuantity = tour.pricing[category]?.quantity || 0;
+    
+    // Get the correct pricing category - match backend structure
+    let maxQuantity = 0;
+    if (category === 'adults') {
+      maxQuantity = tour.pricing.adult?.quantity || 0;
+    } else if (category === 'children') {
+      maxQuantity = tour.pricing.child?.quantity || 0;
+    } else if (category === 'toddlers') {
+      maxQuantity = tour.pricing.toddler?.quantity || 0;
+    } else if (category === 'babies') {
+      maxQuantity = tour.pricing.baby?.quantity || 0;
+    }
     
     setQuantities(prev => ({
       ...prev,
@@ -37,11 +49,12 @@ const BookingForm = ({ tour, onClose }) => {
     const totalPrice = calculateTotal();
     
     if (totalPrice === 0) {
-      alert('Please select at least one person');
+      setMessage({ type: 'error', text: 'Please select at least one person' });
       return;
     }
 
     setLoading(true);
+    setMessage({ type: '', text: '' });
 
     try {
       await bookingService.create({
@@ -49,15 +62,15 @@ const BookingForm = ({ tour, onClose }) => {
         quantities: quantities
       });
 
-      alert('Booking confirmed successfully!');
+      setMessage({ type: 'success', text: 'Booking confirmed successfully!' });
       
-      // Close modal and redirect to profile
-      onClose();
+      // Close modal and redirect to profile after success message
       setTimeout(() => {
+        onClose();
         navigate('/profile');
-      }, 500);
+      }, 2000);
     } catch (err) {
-      alert(err.message || 'Booking failed. Please try again.');
+      setMessage({ type: 'error', text: err.message || 'Booking failed. Please try again.' });
     } finally {
       setLoading(false);
     }
@@ -103,44 +116,57 @@ const BookingForm = ({ tour, onClose }) => {
           </button>
         </div>
 
+        {/* Success/Error Messages */}
+        {message.text && (
+          <div style={{
+            padding: '12px',
+            backgroundColor: message.type === 'success' ? '#d4edda' : '#f8d7da',
+            color: message.type === 'success' ? '#155724' : '#721c24',
+            border: `1px solid ${message.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`,
+            borderRadius: '4px',
+            marginBottom: '20px',
+            fontSize: '0.95em'
+          }}>
+            {message.text}
+          </div>
+        )}
+
         <form onSubmit={handleSubmit}>
           <div style={{ marginBottom: '20px' }}>
             <h3>Select Quantities</h3>
             
-            {/* Adults */}
-            {tour.pricing.adult && (
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <div>
-                  <label style={{ fontWeight: 'bold' }}>Adults</label>
-                  <div style={{ fontSize: '0.9em', color: '#666' }}>
-                    ${tour.pricing.adult.price} • Available: {tour.pricing.adult.quantity}
-                  </div>
+            {/* Adults - Always show if adult pricing exists */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <div>
+                <label style={{ fontWeight: 'bold' }}>Adults</label>
+                <div style={{ fontSize: '0.9em', color: '#666' }}>
+                  {tour.pricing.adult?.price ? `${tour.pricing.adult.price} BHD` : 'Free'} • Available: {tour.pricing.adult?.quantity || 0}
                 </div>
-                <input
-                  type="number"
-                  min="0"
-                  max={tour.pricing.adult.quantity}
-                  value={quantities.adults}
-                  onChange={(e) => handleQuantityChange('adults', e.target.value)}
-                  style={{ width: '80px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
-                  required
-                />
               </div>
-            )}
+              <input
+                type="number"
+                min="0"
+                max={tour.pricing.adult?.quantity || 0}
+                value={quantities.adults}
+                onChange={(e) => handleQuantityChange('adults', e.target.value)}
+                style={{ width: '80px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
+                required
+              />
+            </div>
 
-            {/* Children */}
-            {tour.pricing.child?.price > 0 && (
+            {/* Children - Show if child pricing exists OR if child quantity is available */}
+            {(tour.pricing.child?.price !== undefined || tour.pricing.child?.quantity > 0) && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <div>
                   <label style={{ fontWeight: 'bold' }}>Children</label>
                   <div style={{ fontSize: '0.9em', color: '#666' }}>
-                    ${tour.pricing.child.price} • Available: {tour.pricing.child.quantity}
+                    {tour.pricing.child?.price ? `${tour.pricing.child.price} BHD` : 'Free'} • Available: {tour.pricing.child?.quantity || 0}
                   </div>
                 </div>
                 <input
                   type="number"
                   min="0"
-                  max={tour.pricing.child.quantity}
+                  max={tour.pricing.child?.quantity || 0}
                   value={quantities.children}
                   onChange={(e) => handleQuantityChange('children', e.target.value)}
                   style={{ width: '80px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
@@ -148,19 +174,19 @@ const BookingForm = ({ tour, onClose }) => {
               </div>
             )}
 
-            {/* Toddlers */}
-            {tour.pricing.toddler?.price > 0 && (
+            {/* Toddlers - Show if toddler pricing exists OR if toddler quantity is available */}
+            {(tour.pricing.toddler?.price !== undefined || tour.pricing.toddler?.quantity > 0) && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <div>
                   <label style={{ fontWeight: 'bold' }}>Toddlers</label>
                   <div style={{ fontSize: '0.9em', color: '#666' }}>
-                    ${tour.pricing.toddler.price} • Available: {tour.pricing.toddler.quantity}
+                    {tour.pricing.toddler?.price ? `${tour.pricing.toddler.price} BHD` : 'Free'} • Available: {tour.pricing.toddler?.quantity || 0}
                   </div>
                 </div>
                 <input
                   type="number"
                   min="0"
-                  max={tour.pricing.toddler.quantity}
+                  max={tour.pricing.toddler?.quantity || 0}
                   value={quantities.toddlers}
                   onChange={(e) => handleQuantityChange('toddlers', e.target.value)}
                   style={{ width: '80px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
@@ -168,19 +194,19 @@ const BookingForm = ({ tour, onClose }) => {
               </div>
             )}
 
-            {/* Babies */}
-            {tour.pricing.baby?.price > 0 && (
+            {/* Babies - Show if baby pricing exists OR if baby quantity is available */}
+            {(tour.pricing.baby?.price !== undefined || tour.pricing.baby?.quantity > 0) && (
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
                 <div>
                   <label style={{ fontWeight: 'bold' }}>Babies</label>
                   <div style={{ fontSize: '0.9em', color: '#666' }}>
-                    ${tour.pricing.baby.price} • Available: {tour.pricing.baby.quantity}
+                    {tour.pricing.baby?.price ? `${tour.pricing.baby.price} BHD` : 'Free'} • Available: {tour.pricing.baby?.quantity || 0}
                   </div>
                 </div>
                 <input
                   type="number"
                   min="0"
-                  max={tour.pricing.baby.quantity}
+                  max={tour.pricing.baby?.quantity || 0}
                   value={quantities.babies}
                   onChange={(e) => handleQuantityChange('babies', e.target.value)}
                   style={{ width: '80px', padding: '8px', border: '1px solid #ddd', borderRadius: '4px' }}
@@ -192,7 +218,7 @@ const BookingForm = ({ tour, onClose }) => {
           <div style={{ borderTop: '2px solid #ddd', paddingTop: '20px', marginBottom: '20px' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1.3em', fontWeight: 'bold' }}>
               <span>Total:</span>
-              <span>${totalPrice}</span>
+              <span>{totalPrice} BHD</span>
             </div>
           </div>
 
