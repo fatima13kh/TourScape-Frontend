@@ -207,7 +207,7 @@ const TourForm = (props) => {
           bookingDeadline: '',
           duration: { days: 0, nights: 0 }
         });
-        navigate('/tours');
+        navigate('/');
       }, 2000);
       
     } catch (err) {
