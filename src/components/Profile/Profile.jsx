@@ -123,9 +123,6 @@ const Profile = () => {
       <div className="user-info">
         <h2>{user.username}</h2>
         <div>
-          <strong>Email:</strong> {user.email || 'N/A'}
-        </div>
-        <div>
           <strong>Role:</strong> {user.role}
         </div>
       </div>
