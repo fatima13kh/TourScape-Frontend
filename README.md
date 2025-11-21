@@ -2,14 +2,14 @@
 
 ---
 
-![LandingPage](Assets/LandingPage.png)
-![SignIn](Assets/SignIn.png)
-![SignUp](Assets/SignUp.png)
-![Home](Assets/Home.png)
-![Companies](Assets/Companies.png)
-![CompaniesTours](Assets/CompaniesTours.png)
-![Booking](Assets/Booking.png)
-![Profile](Assets/Profile.png)
+![LandingPage](src/assets/LandingPage.png)
+![SignIn](src/assets/SignIn.png)
+![SignUp](src/assets/SignUp.png)
+![Home](src/assets/Home.png)
+![Companies](src/assets/Companies.png)
+![CompaniesTours](src/assets/CompaniesTours.png)
+![Booking](src/assets/Booking.png)
+![Profile](src/assets/Profile.png)
 
 
 ---
@@ -113,7 +113,7 @@ I built **TourScape** to create a digital marketplace that bridges the gap betwe
 
 ## 🗂️ ERD Diagram
 
-![ERD Diagram](Assets/ERD.png)
+![ERD Diagram](src/assets/ERD.png)
 
 
 ---
