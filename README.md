@@ -112,7 +112,7 @@ I built **TourScape** to create a digital marketplace that bridges the gap betwe
 
 ## 🗂️ ERD Diagram
 
-![ERD Diagram](Assets/ERD.png)
+![ERD Diagram](src/assets/ERD.png)
 
 
 ---
