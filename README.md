@@ -2,7 +2,14 @@
 
 ---
 
-
+![LandingPage](src/assets/LandingPage.png)
+![SignIn](src/assets/SignIn.png)
+![SignUp](src/assets/SignUp.png)
+![Home](src/assets/Home.png)
+![Companies](src/assets/Companies.png)
+![CompaniesTours](src/assets/CompaniesTours.png)
+![Booking](src/assetss/Booking.png)
+![Profile](src/assets/Profile.png)
 
 ---
 
