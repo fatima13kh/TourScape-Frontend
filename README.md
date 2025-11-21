@@ -1,190 +1,205 @@
-# 🧳 Curated Travel Experiences
-
-## 📘 Project Overview
-**TourScape:** Tourscape is a comprehensive travel booking platform connecting travelers with professional tour companies. Multiple travel companies can showcase their curated itineraries, adventure packages, cultural tours, and relaxation getaways, while customers can browse, compare, and book their ideal travel experiences.
+# TourScape
 
 ---
 
-## 🚀 Key Features
-### 👤 For Travel Companies
-- Create and manage travel packages with detailed itineraries, accommodations, activities, and pricing.
-- Monitor bookings and manage customer reservations.
+![LandingPage](Assets/LandingPage.png)
+![SignIn](Assets/SignIn.png)
+![SignUp](Assets/SignUp.png)
+![Home](Assets/Home.png)
+![Companies](Assets/Companies.png)
+![CompaniesTours](Assets/CompaniesTours.png)
+![Booking](Assets/Booking.png)
+![Profile](Assets/Profile.png)
 
-### 🌍 For Customers
-- Explore diverse travel experiences filtered by theme, destination, and budget.
-- View detailed package information and book experiences easily.
-
-### ⚙️ Platform Capabilities
-- Role-based access for travelers and companies.
-- Secure authentication and authorization.
-- Package browsing, filtering, and booking management.
-- Company profile pages showcasing their travel offerings.
 
 ---
 
-## 🛠️ Technologies Used
-- **Frontend:** React, Vite  
-- **Backend:** Node.js, Express.js  
-- **Database:** MongoDB with Mongoose  
-- **Authentication:** JWT (JSON Web Token)  
+## 🎨 Project Title: TourScape
+
+### What is TourScape?
+
+**TourScape** is a comprehensive travel booking platform connecting travelers with professional tour companies. Multiple travel companies can showcase their curated itineraries, adventure packages, cultural tours, and relaxation getaways, while customers can browse, compare, and book their ideal travel experiences. The platform features specialized categories including:
+
+- **Adventure:** Hiking, Trekking, Extreme Sports
+- **Cultural:** Heritage Sites, Local Experiences, Historical Tours
+- **Relaxation:** Spa Getaways, Beach Vacations, Wellness Retreats
+- **Business:** Corporate Retreats, Conference Travel
+- **Family:** Kid-friendly Activities, Family Packages
+
+The website provides a seamless booking experience with real-time availability and comprehensive tour details.
 
 ---
 
-## 🧩 User Stories
+## 🌟 Why This Project?
 
-### 👤 **Epic 1: User Authentication & Roles**
-
-#### **1.1 – Customer Registration**
-As a **customer**, I want to **create an account** so that I can **save my information and book travel packages securely**.
-
-**Acceptance Criteria:**
-- Customer can sign up with name, email, password, and Phone Number.  
-- System validates email uniqueness.  
-- Passwords are encrypted before storage.  
-- Upon success, user receives a confirmation or JWT token.
+I built **TourScape** to create a digital marketplace that bridges the gap between tour providers and travelers. The platform empowers tour companies to reach wider audiences while giving customers a trusted way to discover and book unique travel experiences with verified providers.
 
 ---
 
-#### **1.2 – Travel Company Registration**
-As a **travel company**, I want to **register my company on the platform** so that I can **offer my travel packages to potential customers**.
+## 🧠 User Concept Overview
 
-**Acceptance Criteria:**
-- Company provides company name, email, password, and Phone Number.  
-- Password is stored securely (hashed).  
-- Role is automatically assigned as “company.”  
-- The company can log in immediately after registration.
+### Customers (Travelers)
+* Browse tours by category, country, city, and price range
+* View detailed tour information: itineraries, pricing, dates, and company profiles
+* Book tours with flexible party composition (adults, children, toddlers, babies)
+* Track booking history and manage reservations
+* Compare different tour companies and their offerings
 
----
-
-#### **1.3 – User Login**
-As a **registered user (traveler or company)**, I want to **log in securely** so that I can **access my personalized dashboard**.
-
-**Acceptance Criteria:**
-- Login supports both traveler and company accounts.  
-- System returns a JWT token on success.  
-- Invalid credentials show a proper error message.
+### Tour Companies (Providers)
+* Create and manage comprehensive tour listings
+* Set dynamic pricing for different age groups and manage availability
+* Monitor bookings, revenue analytics, and attendee statistics
+* Showcase company profiles and build brand presence
+* Manage tour schedules and booking deadlines
 
 ---
 
+## ✅ Website Features
 
-### 🌍 **Epic 2: Travel Package Management**
+* Dual-role user authentication (Customer/Tour Company)
+* Advanced tour filtering by category
+* Comprehensive booking system with real-time availability
+* Company profile pages with tour listings
+* Booking management and history tracking
+* Tour creation and management for companies
+* Revenue and booking analytics for tour companies
+* Responsive, mobile-friendly design
 
-#### **2.1 – Create Travel Package**
-As a **travel company**, I want to **create a new travel package** so that **travelers can view and book it**.
-
-**Acceptance Criteria:**
-- Company can enter title, destination, description, price, itinerary, and available dates.  
-- System validates required fields.  
-- Package is linked to the company account.  
-- Package is visible on the main listing page.
-
----
-
-#### **2.2 – Edit Travel Package**
-As a **travel company**, I want to **update details of my packages** so that **I can correct or improve my offerings**.
-
-**Acceptance Criteria:**
-- Company can edit any field of their own packages.  
-- System prevents editing packages owned by other companies.  
-- Updates reflect immediately in traveler views.
-- Company cannot delete the booking after  payment. (extra)
 
 ---
 
-#### **2.3 – Delete Travel Package**
-As a **travel company**, I want to **delete outdated or inactive packages** so that **my listings stay up-to-date**.
+## 🚦 API Routes
 
-**Acceptance Criteria:**
-- Only the company that created the package can delete it.  
-- Associated bookings remain stored for record-keeping.  
-- Package disappears from traveler browsing lists.
+### **1. Authentication Routes**
 
----
+| Method | Route | Description |
+| ------ | ----- | ----------- |
+| POST | `/auth/sign-up` | User registration with role selection |
+| POST | `/auth/sign-in` | User login and JWT token generation |
 
-#### **2.4 – View Company’s Packages**
-As a **travel company**, I want to **see all my existing packages in one dashboard** so that **I can manage them efficiently**.
+### **2. Tour Routes (Protected)**
 
-**Acceptance Criteria:**
-- Displays all packages owned by the logged-in company.  
-- Shows summary info (title, destination, bookings count).  
-- Offers quick edit and delete actions.
+| Method | Route | Description |
+| ------ | ----- | ----------- |
+| GET | `/tours` | Get all tours with filtering options |
+| GET | `/tours/:tourId` | Get single tour details |
+| POST | `/tours` | Create new tour (Tour Company only) |
+| PUT | `/tours/:tourId` | Update tour (Owner only) |
+| DELETE | `/tours/:tourId` | Delete tour (Owner only) |
 
----
+### **3. Booking Routes (Protected)**
 
-### 🧭 **Epic 3: Customer Experience & Booking**
+| Method | Route | Description |
+| ------ | ----- | ----------- |
+| POST | `/bookings` | Create new booking (Customer only) |
+| GET | `/bookings` | Get user's booking history |
 
-#### **3.1 – Browse Packages**
-As a **traveler**, I want to **browse available travel packages** so that **I can explore different travel options**.
+### **4. Company Routes (Protected)**
 
-**Acceptance Criteria:**
-- Customers see all active packages.  
-- Each package displays image, price, destination, and short description.  
-- Supports pagination or infinite scrolling.
+| Method | Route | Description |
+| ------ | ----- | ----------- |
+| GET | `/companies` | Get all tour companies |
+| GET | `/companies/:companyId` | Get company profile with tours |
 
----
+### **5. User Routes (Protected)**
 
-#### **3.2 – Filter & Search Packages**
-As a **customer**, I want to **filter and search packages** by **destination, theme, or budget** so that **I can quickly find trips that match my preferences**.
-
-**Acceptance Criteria:**
-- Filters include: theme, destination, price range.  
-- Search by package title or destination.  
-- Results update dynamically.
-
----
-
-#### **3.3 – View Package Details**
-As a **customer**, I want to **view detailed information about a travel package** so that **I can make an informed decision before booking**.
-
-**Acceptance Criteria:**
-- Displays itinerary, accommodation, activities, and available dates.  
-- Shows company name and contact info.  
-- Option to proceed with booking.
+| Method | Route | Description |
+| ------ | ----- | ----------- |
+| GET | `/users` | Get all users |
+| GET | `/users/:id` | Get user profile |
+| PUT | `/users/:id` | Update user profile |
 
 ---
 
-#### **3.4 – Book a Package**
-As a **customer**, I want to **book a travel package** by selecting my travel date and number of travelers so that **I can reserve my spot**.
+## 🗂️ ERD Diagram
 
-**Acceptance Criteria:**
-- Booking form includes date and traveler count.  
-- Calculates total price automatically.  
-- Saves booking in the database.  
-- Traveler and company can view booking status.
+![ERD Diagram](Assets/ERD.png)
+
+
+---
+## Project Management
+
+For detailed project tracking and task management, visit my Trello board:
+
+[TourScape Trello Board](https://trello.com/invite/b/69060b3d4be2e78eabaf7882/ATTIff2ad63a2e4f05a90d163befd1d88ac5572C04E8/tourscape)
+
+
+## 🚀 Getting Started
+
+### 🖥️ Steps to Use TourScape
+
+1. **Sign Up or Sign In**  
+   * Create an account as either a Customer or Tour Company
+   * Choose your role based on your needs
+
+2. **Browse Tours**  
+   * Explore tours by category: Adventure, Cultural, Relaxation, Business, Family
+   * Use filters to find tours by location and price range
+   * Click any tour to view detailed information
+
+3. **Book Tours (Customers)**  
+   * Select your party composition (adults, children, toddlers, babies)
+   * View real-time pricing and availability
+   * Complete booking with confirmation
+
+4. **Manage Profile**  
+   * View your booking history and upcoming trips
+   * Update personal information and preferences
+   * Track your travel experiences
+
+5. **Create Tours (Tour Companies)**  
+   * Add new tour listings with comprehensive details
+   * Set pricing for different age groups
+   * Manage availability and booking deadlines
+   * Monitor bookings and revenue analytics
+
+6. **Company Management**  
+   * Build your company profile with description and contact info
+   * Showcase all your available tours
+   * Track booking statistics and attendee demographics
 
 ---
 
-#### **3.5 – Manage My Bookings**
-As a **traveler**, I want to **view and manage my bookings** so that **I can track or cancel them if needed**.
+## Assets & Inspiration
 
-**Acceptance Criteria:**
-- Travelers can view all bookings with details.  
-- Can cancel pending bookings (before confirmation).  
-- Status updates reflect instantly.
+The design and user experience for TourScape were inspired by modern travel platforms and booking systems, focusing on intuitive navigation and comprehensive tour discovery.
+
+> This project is developed for educational purposes as part of a web development portfolio.
 
 ---
 
-### 📦 **Epic 4: Company Booking Management**
+## 🧪 Technologies Used
 
-#### **4.1 – View Received Bookings**
-As a **travel company**, I want to **see all bookings made for my packages** so that **I can confirm or manage reservations**.
-
-**Acceptance Criteria:**
-- Displays booking list with traveler name, package, and dates.  
-- Allows updating status (Pending → Confirmed/Cancelled).  
-- Filter bookings by package or status.
-
----
-
-## 📅 Future Enhancements
-- Admin dashboard for platform-wide analytics.  
-- Reviews and ratings for travel packages.  
-- Payment gateway integration.  
-- Email and notification system for booking updates.
+* **Backend:** Node.js, Express.js
+* **Frontend:** React 18, React Router DOM
+* **Database:** MongoDB with Mongoose ODM
+* **Authentication:** JWT (JSON Web Tokens), bcrypt for password hashing
+* **State Management:** React Context API
+* **Build Tool:** Vite
+* **Styling & Layout:** Custom CSS with responsive design
+* **HTTP Client:** Fetch API
 
 ---
 
-## 🧠 Author
-**Developed by:** Abdulla Alsahi  
-**Technologies:** React, Node.js, Express, MongoDB  
-**Purpose:** Capstone project — showcasing full-stack development with real-world travel booking functionality.
+## 🎯 Next Steps / Future Enhancements
+
+1. Implement payment gateway integration (Stripe/PayPal)
+2. Add reviews and rating system for tours and companies
+3. Develop advanced search with geolocation and recommendations
+4. Create real-time notifications for bookings and updates
+5. Integrate social media sharing and user-generated content
+6. Build admin dashboard for platform moderation
+7. Add multi-language support for international users
+8. Develop mobile application with React Native
+9. Implement real-time chat between customers and companies
+10. Add wishlist and tour comparison features
+
+---
+
+## Developed By
+
+1. Fatima Khamis
+2. Saraa Hameed
+3. Adbulla Alsahi
+
+---
