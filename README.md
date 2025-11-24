@@ -8,8 +8,13 @@
 ![Home](src/assets/Home.png)
 ![Companies](src/assets/Companies.png)
 ![CompaniesTours](src/assets/CompaniesTours.png)
-![Booking](src/assetss/Booking.png)
+![Booking](src/assets/Booking.png)
 ![Profile](src/assets/Profile.png)
+
+
+---
+
+## Deployed Link : https://tour-scape-frontend.vercel.app
 
 ---
 
@@ -31,7 +36,7 @@ The website provides a seamless booking experience with real-time availability a
 
 ## 🌟 Why This Project?
 
-I built **TourScape** to create a digital marketplace that bridges the gap between tour providers and travelers. The platform empowers tour companies to reach wider audiences while giving customers a trusted way to discover and book unique travel experiences with verified providers.
+We built **TourScape** to create a digital marketplace that bridges the gap between tour providers and travelers. The platform empowers tour companies to reach wider audiences while giving customers a trusted way to discover and book unique travel experiences with verified providers.
 
 ---
 
