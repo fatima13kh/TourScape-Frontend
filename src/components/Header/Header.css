@@ -1,0 +1,95 @@
+.header {
+ background-image: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url("../../assets/TourScape.jpeg");
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-align: center;
+  padding: 20px;
+}
+
+.header-title {
+  font-size: 4rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.header-subtitle {
+  font-size: 1.5rem;
+  max-width: 600px;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+}
+
+.header-buttons {
+  margin-top: 30px;
+}
+
+.get-started-button {
+  padding: 12px 30px;
+  background-color: #28a745;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1.1rem;
+  margin-right: 15px;
+}
+
+.sign-in-button {
+  padding: 12px 30px;
+  background-color: transparent;
+  color: white;
+  text-decoration: none;
+  border: 2px solid white;
+  border-radius: 5px;
+  font-size: 1.1rem;
+}
+
+/*  Responsive */
+@media (max-width: 768px) {
+  .header {
+    height: 300px;
+    padding: 15px;
+  }
+
+  .header-title {
+    font-size: 2.5rem;
+  }
+
+  .header-subtitle {
+    font-size: 1.2rem;
+    max-width: 90%;
+  }
+
+  .header-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .get-started-button,
+  .sign-in-button {
+    margin: 0;
+    text-align: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    height: 250px;
+  }
+
+  .header-title {
+    font-size: 2rem;
+  }
+
+  .header-subtitle {
+    font-size: 1rem;
+  }
+}
