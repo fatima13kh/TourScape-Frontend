@@ -1,0 +1,60 @@
+.favorite-button-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.favorite-button {
+    background-color: #6ba86f;
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    min-width: 150px;
+}
+
+.favorite-button:hover {
+    background-color: #559359;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(107, 168, 111, 0.3);
+}
+
+.favorite-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(107, 168, 111, 0.2);
+}
+
+.favorite-button:disabled {
+    background-color: #6ba86f;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.favorite-message {
+    font-size: 12px;
+    text-align: center;
+    min-height: 16px;
+    margin-top: 4px;
+}
+
+.favorite-message.success {
+    color: #559359;
+    font-weight: 500;
+}
+
+.favorite-message.error {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+@media (max-width: 768px) {
+    .favorite-button {
+        padding: 8px 12px;
+        font-size: 13px;
+        min-width: 130px;
+    }
+}

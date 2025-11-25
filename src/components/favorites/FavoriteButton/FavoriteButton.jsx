@@ -3,6 +3,7 @@
 import { useState, useContext, useEffect } from 'react';
 import { UserContext } from '../../../contexts/UserContext';
 import * as favoritesService from '../../../services/favoritesService';
+import './FavoriteButton.css';
 
 const FavoriteButton = ({ tourId }) => {
   const { user } = useContext(UserContext);
@@ -54,11 +55,15 @@ const FavoriteButton = ({ tourId }) => {
   }
 
   return (
-    <div>
-      <button onClick={handleToggleFavorite} disabled={loading}>
+    <div className="favorite-button-container">
+      <button
+        className="favorite-button"
+        onClick={handleToggleFavorite}
+        disabled={loading}
+      >
         {loading ? 'Loading...' : isFavorited ? 'Remove from Favorites' : 'Add to Favorites'}
       </button>
-      {message && <p>{message}</p>}
+      {message && <p className="favorite-message success">{message}</p>}
     </div>
   );
 };
